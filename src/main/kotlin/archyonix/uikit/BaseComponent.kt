@@ -4,7 +4,7 @@ import net.minestom.server.inventory.Inventory
 import net.minestom.server.tag.Tag
 import org.bspfsystems.yamlconfiguration.configuration.ConfigurationSection
 
-abstract class Component<T>(
+abstract class BaseComponent<T>(
     val id: String
 ) {
     var order: Int = 0

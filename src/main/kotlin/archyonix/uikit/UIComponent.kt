@@ -1,4 +1,3 @@
 package archyonix.uikit
 
-class UIComponent {
-}
+abstract class UIComponent<T: BaseComponent<*>>(id: String) : BaseComponent<T>(id)

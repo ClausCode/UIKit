@@ -1,0 +1,17 @@
+display: "Example UI"
+columns: 3
+colors:
+  red: "#db2929"
+  blue: "#2a93db"
+components:
+  component-id:
+    component: "UIView"
+    displayName: "View"
+    description:
+      - "<blue>User <red>%userId%"
+      - "<blue>Score: <red>%score%"
+    order: 0
+    tags:
+      texture: "1"
+    icon: "minecraft:stick"
+    pos: "0:0"

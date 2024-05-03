@@ -8,10 +8,14 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.hypera.dev/snapshots' }
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation 'net.minestom:minestom-snapshots:' + minestomVersion
+    implementation 'org.bspfsystems:yamlconfiguration:' + yamlVersion
+    implementation 'org.reflections:reflections:' + reflectionVersion
 }
 
 test {
