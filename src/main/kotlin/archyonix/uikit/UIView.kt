@@ -14,7 +14,7 @@ import kotlin.math.min
 
 open class UIView(
     id: String
-) : UIComponent<UIView>(id) {
+) : UIComponent(id) {
     private var x: Int = 0
     private var y: Int = 0
     private var hasView: Boolean = true
@@ -28,8 +28,11 @@ open class UIView(
 
     override fun render(ui: UI, inventory: Inventory) {
         if (!hasView) return
+
+        val slot = y * 9 + x
+        if (slot >= inventory.size) return
         onRender(this)
-        inventory.setItemStack(y * 9 + x, createItemStack(ui.colors))
+        inventory.setItemStack(slot, createItemStack(ui.colors))
     }
 
     private fun createItemStack(colors: Map<String, TextColor>): ItemStack {
@@ -131,7 +134,7 @@ open class UIView(
         return this
     }
 
-    override fun importFromConfig(config: ConfigurationSection): UIView {
+    override fun importFromConfig(config: ConfigurationSection): UIComponent {
         var view = UIView(config.name)
 
         val tagSection = config.getConfigurationSection("tags")
@@ -144,10 +147,10 @@ open class UIView(
         return view
             .withDisplayName(config.getString("displayName") ?: view.displayName)
             .withDescription(config.getStringList("description"))
-            .withOrder(config.getInt("order"))
             .withIcon(config.getString("icon") ?: view.icon)
             .withAmount(config.getInt("amount"))
-            .withView(config.getBoolean("isView"))
+            .withView(config.getBoolean("isView", true))
+            .withOrder(config.getInt("order"))
     }
 }
 
@@ -171,7 +174,6 @@ fun String.withColors(colors: Map<String, TextColor>): Component {
                 break
             }
         }
-        if (color == null) resultLine = "<$resultLine"
         components.add(Component.text(resultLine, color ?: TextColor.fromHexString("#8e8f90")))
     }
     return Component.join(JoinConfiguration.noSeparators(), components)

@@ -1,5 +1,4 @@
-display: "Example UI"
-columns: 3
+displayName: "Example UI"
 colors:
   red: "#db2929"
   blue: "#2a93db"
