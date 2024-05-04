@@ -1,4 +1,5 @@
 plugins {
+    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'application'
 }
@@ -16,6 +17,24 @@ dependencies {
     implementation 'net.minestom:minestom-snapshots:' + minestomVersion
     implementation 'org.bspfsystems:yamlconfiguration:' + yamlVersion
     implementation 'org.reflections:reflections:' + reflectionVersion
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+publishing {
+    publications {
+        publication(MavenPublication) {
+            groupId = "com.clauscode"
+            artifactId = "UIKit"
+            version = "1.0-SNAPSHOT"
+
+            from components.kotlin
+            artifact sourceJar
+        }
+    }
 }
 
 test {
