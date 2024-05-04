@@ -1,4 +1,4 @@
-package archyonix.uikit
+package archyonix.uikit.annotations
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)

@@ -1,5 +1,6 @@
-package archyonix.uikit
+package archyonix.uikit.components
 
+import archyonix.uikit.UI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.TextColor
@@ -78,64 +79,64 @@ open class UIView(
             }
     }
 
-    fun withView(isView: Boolean): UIView {
+    open fun withView(isView: Boolean): UIView {
         this.hasView = isView
         return this
     }
 
-    fun withIcon(icon: String): UIView {
+    open fun withIcon(icon: String): UIView {
         this.icon = icon
         return this
     }
 
-    fun withDisplayName(displayName: String): UIView {
+    open fun withDisplayName(displayName: String): UIView {
         this.displayName = displayName
         return this
     }
 
-    fun withDescription(description: List<String>): UIView {
+    open fun withDescription(description: List<String>): UIView {
         this.description = description
         return this
     }
 
-    fun withPosition(x: Int, y: Int): UIView {
+    open fun withPosition(x: Int, y: Int): UIView {
         this.x = x
         this.y = y
         return this
     }
 
-    fun withAmount(amount: Int): UIView {
+    open fun withAmount(amount: Int): UIView {
         this.amount = max(1, min(amount, 127))
         return this
     }
 
-    fun withProperty(name: String, value: String): UIView {
+    open fun withProperty(name: String, value: String): UIView {
         this.properties[name] = value
         return this
     }
 
-    fun withX(x: Int): UIView {
+    open fun withX(x: Int): UIView {
         this.x = max(0, min(x, 8))
         return this
     }
 
-    fun withY(y: Int): UIView {
+    open fun withY(y: Int): UIView {
         this.y = max(0, min(y, 5))
         return this
     }
 
-    fun withTag(name: String, value: String): UIView {
+    open fun withTag(name: String, value: String): UIView {
         this.tags[name] = value
         return this
     }
 
-    fun onRender(onRenderFunc: (component: UIView) -> Unit): UIView {
+    open fun onRender(onRenderFunc: (component: UIView) -> Unit): UIView {
         this.onRender = onRenderFunc
         return this
     }
 
     override fun importFromConfig(config: ConfigurationSection): UIComponent {
-        var view = UIView(config.name)
+        var view = this
 
         val tagSection = config.getConfigurationSection("tags")
         if (tagSection != null) {
@@ -153,6 +154,9 @@ open class UIView(
             .withOrder(config.getInt("order"))
     }
 }
+
+fun String.getUIPosX() = split(":")[0].toInt()
+fun String.getUIPosY() = split(":")[1].toInt()
 
 fun String.withProperties(props: Map<String, String>): String {
     var resultString = this
