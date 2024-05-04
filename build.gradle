@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.clauscode'
-version = '142204052024'
+version = '143004052024'
 
 repositories {
     mavenCentral()
@@ -49,4 +49,9 @@ compileTestKotlin {
 
 application {
     mainClassName = 'MainKt'
+}
+
+wrapper {
+    gradleVersion = "7.6.1"
+    distributionType = Wrapper.DistributionType.ALL
 }
