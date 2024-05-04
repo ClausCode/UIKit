@@ -1,5 +1,9 @@
 package archyonix.uikit
 
+import archyonix.uikit.annotations.UIPreset
+import archyonix.uikit.components.ComponentIdTag
+import archyonix.uikit.components.UIComponent
+import archyonix.uikit.components.withColors
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
@@ -18,12 +22,12 @@ import java.util.*
 abstract class UI(
     val viewer: Player,
     inventoryType: InventoryType,
-) {
+) : ComponentContainer<UIComponent> {
+    override val components: MutableList<UIComponent> = ArrayList()
     private var displayName: String = "UI"
     val colors: MutableMap<String, TextColor> = HashMap()
     private val inventory: Inventory = Inventory(inventoryType, "")
     private val handler: EventNode<Event> = EventNode.all(UUID.randomUUID().toString())
-    private val components: MutableSet<UIComponent> = HashSet()
 
     init {
         if (javaClass.isAnnotationPresent(UIPreset::class.java)) importPreset()
@@ -36,6 +40,11 @@ abstract class UI(
 
         handler.addListener(InventoryPreClickEvent::class.java) { event ->
             if (event.inventory == inventory) event.isCancelled = true
+            val itemStack = inventory.getItemStack(event.slot)
+            if (!itemStack.hasTag(ComponentIdTag)) return@addListener
+            val componentId = itemStack.getTag(ComponentIdTag)!!
+            val component = findComponent<UIComponent>(componentId) ?: return@addListener
+            component.action(this, event)
         }
     }
 
@@ -56,23 +65,6 @@ abstract class UI(
         return this
     }
 
-    fun withComponent(component: UIComponent): UI {
-        this.components.add(component)
-        return this
-    }
-
-    fun removeComponent(component: UIComponent) {
-        this.components.remove(component)
-    }
-
-    fun removeComponent(id: String) {
-        this.components.removeIf { it.id == id }
-    }
-
-    fun <T : UIComponent> findComponent(id: String): T {
-        return this.components.find { it.id == id } as T
-    }
-
     fun withColor(name: String, colorHEX: String): UI {
         this.colors[name] = TextColor.fromHexString(colorHEX)!!
         return this
@@ -81,6 +73,22 @@ abstract class UI(
     fun withDisplayName(displayName: String): UI {
         this.displayName = displayName
         return this
+    }
+
+    override fun <R : UIComponent> findComponent(id: String): R? {
+        val target = this.components.find { it.id == id }
+        if (target != null) return target as R
+
+        val containerList = this.components
+            .filter { it is ComponentContainer<*> }
+            .map { it as ComponentContainer<*> }
+
+        for (container in containerList) {
+            val target = container.findComponent(id) as UIComponent?
+            if (target != null) return target as R
+        }
+
+        return null
     }
 
     private fun importPreset() {
@@ -98,15 +106,6 @@ abstract class UI(
             withColor(key, colorsSection.getString(key) ?: "#8e8f90")
         }
 
-        val componentsSection = config.getConfigurationSection("components")
-        if (componentsSection != null) for (id in componentsSection.getKeys(false)) {
-            val section = componentsSection.getConfigurationSection(id)!!
-            val componentName = section.getString("component") ?: continue
-            withComponent(
-                ComponentManager
-                    .newComponentByName(componentName, id)
-                    .importFromConfig(section)
-            )
-        }
+        loadComponents(config).forEach { withComponent(it) }
     }
 }
