@@ -1,11 +1,11 @@
 plugins {
-    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'maven-publish'
     id 'application'
 }
 
 group = 'com.clauscode'
-version = '140004052024'
+version = '141404052024'
 
 repositories {
     mavenCentral()
@@ -19,12 +19,18 @@ dependencies {
     implementation 'org.reflections:reflections:' + reflectionVersion
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 publishing {
     publications {
-        publication(MavenPublication) {
-            groupId = "com.clauscode"
-            artifactId = "UIKit"
-            version = "140004052024"
+        maven(MavenPublication) {
+            groupId = "com.github.ClausCode"
+            artifactId = "JustGUI"
+            version = "1.0.3-Fix"
+            from components.kotlin
         }
     }
 }
