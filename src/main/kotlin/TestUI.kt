@@ -1,6 +1,5 @@
 import archyonix.uikit.UI
 import archyonix.uikit.annotations.UIPreset
-import archyonix.uikit.components.UIButton
 import net.minestom.server.entity.Player
 import net.minestom.server.inventory.InventoryType
 

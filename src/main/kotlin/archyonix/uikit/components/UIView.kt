@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
+import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.item.ItemHideFlag
 import net.minestom.server.item.ItemStack
@@ -17,16 +18,16 @@ import kotlin.math.min
 open class UIView(
     id: String
 ) : UIComponent(id) {
-    private var x: Int = 0
-    private var y: Int = 0
-    private var hasView: Boolean = true
-    private var icon: String = "minecraft:stone"
-    private var amount: Int = 1
-    private var displayName: String = "View"
-    private var description: List<String> = emptyList()
-    private val properties: MutableMap<String, String> = HashMap()
-    private val tags: MutableMap<String, String> = HashMap()
-    private var onRender: (component: UIView) -> Unit = {}
+    var x: Int = 0
+    var y: Int = 0
+    var hasView: Boolean = true
+    var icon: String = "minecraft:stone"
+    var amount: Int = 1
+    var displayName: String = "View"
+    var description: List<String> = emptyList()
+    val properties: MutableMap<String, String> = HashMap()
+    val tags: MutableMap<String, String> = HashMap()
+    var onRender: (component: UIView) -> Unit = {}
 
     override fun render(ui: UI, inventory: Inventory) {
         if (!hasView) return
@@ -128,6 +129,16 @@ open class UIView(
 
     open fun withTag(name: String, value: String): UIView {
         this.tags[name] = value
+        return this
+    }
+
+    private var onAction: (component: UIView) -> Unit = {}
+    override fun action(ui: UI, event: InventoryPreClickEvent) {
+        onAction(this)
+    }
+
+    open fun onAction(onActionFunc: (component: UIView) -> Unit): UIView {
+        this.onAction = onActionFunc
         return this
     }
 
