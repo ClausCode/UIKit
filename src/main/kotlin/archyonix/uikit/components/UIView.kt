@@ -167,6 +167,8 @@ fun String.withProperties(props: Map<String, String>): String {
 }
 
 fun String.withColors(colors: Map<String, TextColor>): Component {
+    if (colors.isEmpty()) return Component.text(this)
+
     val components: MutableList<Component> = mutableListOf()
     for (line in split("<")) {
         var resultLine = line
@@ -178,7 +180,8 @@ fun String.withColors(colors: Map<String, TextColor>): Component {
                 break
             }
         }
-        components.add(Component.text(resultLine, color ?: TextColor.fromHexString("#8e8f90")))
+        if (color == null) components.add(Component.text(resultLine))
+        else components.add(Component.text(resultLine, color))
     }
     return Component.join(JoinConfiguration.noSeparators(), components)
 }
