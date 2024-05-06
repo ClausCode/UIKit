@@ -150,6 +150,8 @@ open class UIView(
             .withDescription(config.getStringList("description"))
             .withIcon(config.getString("icon") ?: view.icon)
             .withAmount(config.getInt("amount"))
+            .withX(config.getString("pos")?.get(0)?.toInt() ?: 0)
+            .withY(config.getString("pos")?.get(1)?.toInt() ?: 0)
             .withView(config.getBoolean("isView", true))
             .withOrder(config.getInt("order"))
     }
@@ -167,7 +169,7 @@ fun String.withProperties(props: Map<String, String>): String {
 }
 
 fun String.withColors(colors: Map<String, TextColor>): Component {
-    if (colors.isEmpty()) return Component.text(this)
+    if (colors.isEmpty()) return Component.text("§r$this")
 
     val components: MutableList<Component> = mutableListOf()
     for (line in split("<")) {

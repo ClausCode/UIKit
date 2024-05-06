@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.clauscode'
-version = '123906052024'
+version = '202405061618'
 
 sourceCompatibility = 17
 targetCompatibility = 17
