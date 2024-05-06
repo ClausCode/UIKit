@@ -4,6 +4,7 @@ import archyonix.uikit.UI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.item.ItemHideFlag
 import net.minestom.server.item.ItemStack
@@ -150,8 +151,8 @@ open class UIView(
             .withDescription(config.getStringList("description"))
             .withIcon(config.getString("icon") ?: view.icon)
             .withAmount(config.getInt("amount"))
-            .withX(config.getString("pos")?.get(0)?.toInt() ?: 0)
-            .withY(config.getString("pos")?.get(1)?.toInt() ?: 0)
+            .withX(config.getString("pos")?.split(":")?.get(0)?.toInt() ?: 0)
+            .withY(config.getString("pos")?.split(":")?.get(1)?.toInt() ?: 0)
             .withView(config.getBoolean("isView", true))
             .withOrder(config.getInt("order"))
     }
@@ -169,7 +170,7 @@ fun String.withProperties(props: Map<String, String>): String {
 }
 
 fun String.withColors(colors: Map<String, TextColor>): Component {
-    if (colors.isEmpty()) return Component.text("§r$this")
+    if (colors.isEmpty()) return Component.text("§r$this").decoration(TextDecoration.ITALIC, false)
 
     val components: MutableList<Component> = mutableListOf()
     for (line in split("<")) {
@@ -182,8 +183,9 @@ fun String.withColors(colors: Map<String, TextColor>): Component {
                 break
             }
         }
-        if (color == null) components.add(Component.text(resultLine))
-        else components.add(Component.text(resultLine, color))
+        if (color == null) components.add(Component.text("§r$resultLine"))
+        else components.add(Component.text("§r$resultLine", color))
     }
     return Component.join(JoinConfiguration.noSeparators(), components)
+        .decoration(TextDecoration.ITALIC, false)
 }
