@@ -33,7 +33,7 @@ abstract class UI(
         if (javaClass.isAnnotationPresent(UIPreset::class.java)) importPreset()
 
         handler.addListener(InventoryCloseEvent::class.java) { event ->
-            if (event.inventory != null && event.inventory!! == inventory) {
+            if (event.player.username == viewer.username) {
                 MinecraftServer.getGlobalEventHandler().removeChild(handler)
             }
         }
