@@ -39,7 +39,9 @@ abstract class UI(
         }
 
         handler.addListener(InventoryPreClickEvent::class.java) { event ->
+            if (event.player.username != viewer.username) return@addListener
             if (event.inventory == inventory) event.isCancelled = true
+            if (event.slot < 0 || event.slot >= inventoryType.size) return@addListener
             val itemStack = inventory.getItemStack(event.slot)
             if (!itemStack.hasTag(ComponentIdTag)) return@addListener
             val componentId = itemStack.getTag(ComponentIdTag)!!
@@ -54,6 +56,11 @@ abstract class UI(
         render()
 
         MinecraftServer.getGlobalEventHandler().addChild(handler)
+    }
+
+    fun close() {
+        MinecraftServer.getGlobalEventHandler().removeChild(handler)
+        viewer.closeInventory()
     }
 
     fun render() = components
