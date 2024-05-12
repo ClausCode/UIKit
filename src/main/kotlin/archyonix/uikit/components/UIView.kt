@@ -27,15 +27,14 @@ open class UIView(
     var description: List<String> = emptyList()
     val properties: MutableMap<String, String> = HashMap()
     val tags: MutableMap<String, String> = HashMap()
-    var onRender: (component: UIView) -> Unit = {}
+    var onRender: (component: UIView) -> UIView = { this }
 
     override fun render(ui: UI, inventory: Inventory) {
         if (!hasView) return
 
         val slot = y * 9 + x
         if (slot >= inventory.size) return
-        onRender(this)
-        inventory.setItemStack(slot, createItemStack(ui.colors))
+        inventory.setItemStack(slot, onRender(clone()).createItemStack(ui.colors))
     }
 
     private fun createItemStack(colors: Map<String, TextColor>): ItemStack {
@@ -142,7 +141,7 @@ open class UIView(
         return this
     }
 
-    open fun onRender(onRenderFunc: (component: UIView) -> Unit): UIView {
+    open fun onRender(onRenderFunc: (component: UIView) -> UIView): UIView {
         this.onRender = onRenderFunc
         return this
     }
@@ -166,6 +165,20 @@ open class UIView(
             .withY(config.getString("pos")?.split(":")?.get(1)?.toInt() ?: 0)
             .withView(config.getBoolean("isView", true))
             .withOrder(config.getInt("order"))
+    }
+
+    fun clone(): UIView {
+        val view = UIView(id)
+            .withX(x)
+            .withY(y)
+            .withView(hasView)
+            .withAmount(amount)
+            .withDisplayName(displayName)
+            .withDescription(description)
+            .withIcon(icon)
+        view.properties.putAll(properties)
+        view.tags.putAll(tags)
+        return view
     }
 }
 
