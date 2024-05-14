@@ -64,17 +64,32 @@ class UIList(id: String) : UIComponent(id), ComponentContainer<UIView> {
         ceil(components.size / findPageSize().toDouble()).toInt()
 
     override fun render(ui: UI, inventory: Inventory) {
-        if (format == ListFormat.FREE) {
-            val startSlot = minY * 9 + minX
-            val endSlot = maxY * 9 + maxX
+        when (format) {
+            ListFormat.FREE -> {
+                val startSlot = minY * 9 + minX
+                val endSlot = maxY * 9 + maxX
 
-            var index = page * findPageSize()
-            for (slot in startSlot..endSlot) {
-                if (index >= components.size) break
-                components[index++]
-                    .withX(findSlotX(slot))
-                    .withY(findSlotY(slot))
-                    .render(ui, inventory)
+                var index = page * findPageSize()
+                for (slot in startSlot..endSlot) {
+                    if (index >= components.size) break
+                    components[index++]
+                        .withX(findSlotX(slot))
+                        .withY(findSlotY(slot))
+                        .render(ui, inventory)
+                }
+            }
+
+            ListFormat.STRICT -> {
+                var index = findPageSize() * page
+                for (y in minY..maxY) {
+                    for (x in minX..maxX) {
+                        val component = components.getOrNull(index++) ?: return
+                        component
+                            .withX(x)
+                            .withY(y)
+                            .render(ui, inventory)
+                    }
+                }
             }
         }
     }
